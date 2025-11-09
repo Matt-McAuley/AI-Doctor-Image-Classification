@@ -93,7 +93,7 @@
             resultDiv.textContent = 'Classifying...';
 
             try {
-                const response = await fetch('/classify', {
+                const response = await fetch('/api/classify', {
                     method: 'POST',
                     body: formData
                 });

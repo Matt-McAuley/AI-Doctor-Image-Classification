@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-from scipy import io
 import torch
+import io
 from torchvision import transforms, models
 from PIL import Image
 import torch.nn as nn
@@ -9,13 +9,13 @@ import os
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_DIR = './models'
-DOMAINS = ['Blood_Cancer', 'Bone_Fracture', 'Brain_MRI', 'Breast_Cancer', 'Chest_Xray']
+DOMAINS = ['Blood Cancer', 'Bone Fracture', 'Brain MRI', 'Breast Cancer', 'Chest Xray']
 CLASSES_PER_DOMAIN = {
-    'Blood_Cancer': ['benign', 'early_pre-b', 'pre-b', 'pro-b'],
-    'Bone_Fracture': ['fractured', 'not-fractured'],
-    'Brain_MRI': ['giloma_tumor', 'meningioma_tumor', 'no_tumor', 'pituitary_tumor'],
-    'Breast_Cancer': ['idc', 'non_idc'],
-    'Chest_Xray': ['normal', 'pneumonia']
+    'Blood Cancer': ['Benign', 'Early Pre-B', 'Pre-B', 'Pro-B'],
+    'Bone Fracture': ['Fractured', 'Not Fractured'],
+    'Brain MRI': ['Giloma Tumor', 'Meningioma Tumor', 'No Tumor', 'Pituitary Tumor'],
+    'Breast Cancer': ['IDC', 'Non IDC'],
+    'Chest Xray': ['Normal', 'Pneumonia']
 }
 
 def load_checkpoint_model(model_path):
@@ -23,7 +23,7 @@ def load_checkpoint_model(model_path):
     Loads a saved model checkpoint and reconstructs its architecture.
     Returns (model, mean, std).
     """
-    checkpoint = torch.load(model_path, map_location=DEVICE)
+    checkpoint = torch.load(model_path, map_location=DEVICE, weights_only=True)
 
     model = models.resnet18(weights='IMAGENET1K_V1')
     num_classes = checkpoint["model_state_dict"]["fc.weight"].shape[0]
@@ -39,22 +39,21 @@ def load_checkpoint_model(model_path):
 
 def classify_uploaded_image(file_bytes):
     """
-    Classifies an uploaded image (from frontend) using General_Model.pth first
+    Classifies an uploaded image (from frontend) using 'All Domains Model.pth' first
     to determine domain, then the appropriate domain-specific model.
     Returns actual labels instead of indices.
     """
     # Load general model
-    general_model_path = os.path.join(MODEL_DIR, "General_Model.pth")
+    general_model_path = os.path.join(MODEL_DIR, "All Domains Model.pth")
     general_model, mean, std = load_checkpoint_model(general_model_path)
 
     transform = transforms.Compose([
-        transforms.Grayscale(num_output_channels=1),
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
 
-    image = Image.open(io.BytesIO(file_bytes)).convert("L")
+    image = Image.open(io.BytesIO(file_bytes))
     img_tensor = transform(image).unsqueeze(0).to(DEVICE)
 
     # ----- Predict Domain -----
@@ -64,11 +63,10 @@ def classify_uploaded_image(file_bytes):
         domain = DOMAINS[domain_idx]
 
     # ----- Load Domain Model -----
-    domain_model_path = os.path.join(MODEL_DIR, f"{domain}_Model.pth")
+    domain_model_path = os.path.join(MODEL_DIR, f"{domain} Model.pth")
     domain_model, mean, std = load_checkpoint_model(domain_model_path)
 
     transform = transforms.Compose([
-        transforms.Grayscale(num_output_channels=1),
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
