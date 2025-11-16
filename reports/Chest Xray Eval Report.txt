@@ -1,0 +1,13 @@
+Model file: Chest Xray Model.pth
+Total Training Time: 3.79 minutes
+
+Test Accuracy: 90.71%
+
+              precision    recall  f1-score   support
+
+      Normal       0.99      0.76      0.86       234
+   Pneumonia       0.87      1.00      0.93       390
+
+    accuracy                           0.91       624
+   macro avg       0.93      0.88      0.89       624
+weighted avg       0.92      0.91      0.90       624

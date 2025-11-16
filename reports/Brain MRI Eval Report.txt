@@ -1,0 +1,15 @@
+Model file: Brain MRI_Model.pth
+Total Training Time: 3.79 minutes
+
+Test Accuracy: 77.66%
+
+                  precision    recall  f1-score   support
+
+    Glioma Tumor       0.96      0.25      0.40       100
+Meningioma Tumor       0.69      0.98      0.81       115
+        No Tumor       0.75      1.00      0.86       105
+ Pituitary Tumor       0.98      0.85      0.91        74
+
+        accuracy                           0.78       394
+       macro avg       0.85      0.77      0.74       394
+    weighted avg       0.83      0.78      0.74       394

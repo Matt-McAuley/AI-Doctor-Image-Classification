@@ -1,0 +1,13 @@
+Model file: Bone Fracture_Model.pth
+Total Training Time: 3.79 minutes
+
+Test Accuracy: 69.67%
+
+               precision    recall  f1-score   support
+
+    Fractured       0.78      0.68      0.73       360
+Not Fractured       0.60      0.72      0.65       240
+
+     accuracy                           0.70       600
+    macro avg       0.69      0.70      0.69       600
+ weighted avg       0.71      0.70      0.70       600

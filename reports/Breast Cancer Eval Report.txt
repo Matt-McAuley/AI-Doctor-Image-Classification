@@ -1,0 +1,13 @@
+Model file: Breast Cancer_Model.pth
+Total Training Time: 3.79 minutes
+
+Test Accuracy: 85.81%
+
+              precision    recall  f1-score   support
+
+         IDC       0.86      0.86      0.86      1990
+     Non IDC       0.86      0.86      0.86      1999
+
+    accuracy                           0.86      3989
+   macro avg       0.86      0.86      0.86      3989
+weighted avg       0.86      0.86      0.86      3989
