@@ -4,93 +4,316 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Doctor Image Classification</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #0066ff;
+            --primary-hover: #0052cc;
+            --secondary-color: #00c6ff;
+            --light-blue: #f0f8ff;
+            --border-color: #e0e0e0;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --success-color: #27ae60;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            text-align: center;
-            padding: 40px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
-        h1 {
-            color: #333;
-        }
-        #upload-section {
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
             background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            display: inline-block;
-            margin-top: 30px;
+            border-radius: 20px;
+            padding: 30px 40px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 15px;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
         }
-        input[type="file"] {
-            margin: 15px 0;
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
         }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        #imageInput {
+            display: none;
+        }
+
+        #upload-view .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            border: 3px dashed var(--border-color);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.02), rgba(0, 198, 255, 0.02));
+        }
+
+        #upload-view .file-upload-label:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        #upload-view .file-upload-label span {
+            color: var(--text-dark);
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        #preview-view {
+            display: none;
+        }
+
+        .image-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #preview-image-label {
+            display: block;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        #preview-image-label:hover {
+            transform: scale(1.01);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+        }
+
+        #preview-image {
+            width: 100%;
+            height: auto;
+            min-height: 250px;
+            max-height: 350px;
+            object-fit: contain;
+            display: block;
+            background: #f8f9fa;
+        }
+
+        .click-to-change {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .click-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 102, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        #preview-image-label:hover .click-overlay {
+            opacity: 1;
+        }
+
+        .overlay-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
         button {
-            background-color: #007bff;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+            font-family: 'Poppins', sans-serif;
         }
+
         button:hover {
-            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
         }
-        #preview {
-            margin-top: 20px;
-            max-width: 300px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
+
+        button:active {
+            transform: translateY(0);
         }
+
         #result {
-            margin-top: 25px;
-            font-size: 18px;
-            color: #222;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        #result strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        footer {
+            width: 100%;
+            max-width: 1000px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+            font-weight: 400;
+        }
+
+        footer strong {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            #preview-image {
+                min-height: 200px;
+                max-height: 300px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>AI Doctor Image Classification</h1>
+    <div class="container">
+        <h1>AI Doctor Image Classification</h1>
+        <p class="subtitle">Upload a medical image for instant AI-powered diagnosis</p>
 
-    <div id="upload-section">
         <form id="uploadForm">
-            <input type="file" id="imageInput" name="image" accept="image/*" required>
-            <br>
-            <button type="submit">Classify Image</button>
+            <input type="file" id="imageInput" name="image" accept="image/*">
+
+            <div id="upload-view">
+                <label for="imageInput" class="file-upload-label">
+                    <div class="upload-icon">📁</div>
+                    <span>Click to upload an image or drag and drop</span>
+                </label>
+            </div>
+
+            <div id="preview-view">
+                <div class="image-container">
+                    <label for="imageInput" id="preview-image-label">
+                        <img id="preview-image" src="" alt="Image preview">
+                        <div class="click-overlay">
+                            <span class="overlay-text">Click to change image</span>
+                        </div>
+                    </label>
+                    <p class="click-to-change">💡 Click the image above to upload a different one</p>
+                </div>
+                <button type="submit">🔍 Classify Image</button>
+            </div>
         </form>
 
-        <img id="preview" src="" alt="">
         <div id="result"></div>
     </div>
+
+    <footer>
+        <p><strong>Authors:</strong> Matthew McAuley and Priyanjali Solanky</p>
+    </footer>
 
     <script>
         const form = document.getElementById('uploadForm');
         const imageInput = document.getElementById('imageInput');
-        const preview = document.getElementById('preview');
+        const uploadView = document.getElementById('upload-view');
+        const previewView = document.getElementById('preview-view');
+        const previewImage = document.getElementById('preview-image');
         const resultDiv = document.getElementById('result');
 
-        // Image preview
         imageInput.addEventListener('change', () => {
             const file = imageInput.files[0];
             if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-            } else {
-                preview.src = '';
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    uploadView.style.display = 'none';
+                    previewView.style.display = 'block';
+                    resultDiv.innerHTML = '';
+                };
+                reader.readAsDataURL(file);
             }
         });
 
-        // Submit to backend
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const file = imageInput.files[0];
-            if (!file) return;
+            if (!file) {
+                resultDiv.innerHTML = '<strong>⚠️ Please select an image first.</strong>';
+                return;
+            }
 
             const formData = new FormData();
             formData.append('image', file);
 
-            resultDiv.textContent = 'Classifying...';
+            resultDiv.innerHTML = '<strong>⏳ Classifying...</strong>';
 
             try {
                 const response = await fetch('/api/classify', {
@@ -98,7 +321,10 @@
                     body: formData
                 });
 
-                if (!response.ok) throw new Error('Request failed');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Request failed');
+                }
 
                 const data = await response.json();
                 resultDiv.innerHTML = `
@@ -106,7 +332,7 @@
                     <strong>Predicted Class:</strong> ${data.predicted_class}
                 `;
             } catch (err) {
-                resultDiv.textContent = 'Error: ' + err.message;
+                resultDiv.innerHTML = `<strong>❌ Error:</strong> ${err.message}`;
             }
         });
     </script>
