@@ -23,7 +23,7 @@ def load_checkpoint_model(model_path):
     Loads a saved model checkpoint and reconstructs its architecture.
     Returns (model, mean, std).
     """
-    checkpoint = torch.load(model_path, map_location=DEVICE, weights_only=True)
+    checkpoint = torch.load(model_path, map_location=DEVICE, weights_only=False)
 
     model = models.resnet18(weights='IMAGENET1K_V1')
     num_classes = checkpoint["model_state_dict"]["fc.weight"].shape[0]
