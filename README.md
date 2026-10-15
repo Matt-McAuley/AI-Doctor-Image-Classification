@@ -22,3 +22,9 @@ Mooney, P. (2018). *Breast Histopathology Images* [Data set]. Kaggle. https://ww
 
 *Note: This dataset is derived from a larger dataset created for the following publication:*
 Janowczyk, A., & Madabhushi, A. (2016). Deep learning for digital pathology image analysis: A comprehensive tutorial with selected use cases. *Journal of Pathology Informatics*, *7*, 29. https://doi.org/10.4103/2153-3539.186902
+
+## Author
+
+[Matt McAuley](https://mattmcauley.com) | Software Engineer | Cornell Computer Science  
+mwm223@cornell.edu
+
